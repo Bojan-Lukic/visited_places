@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Visited Places</h1>
-    <div id="map1" style="position: relative;"></div>
+    <div id="map1" style="position: relative; width: auto; height: 100vh; border: solid black;"></div>
 
     <script src="countries.js"></script>
     <script src="cities.js"></script>
@@ -19,8 +19,9 @@
         scope: 'world',
         element: document.getElementById('map1'),
         projection: 'mercator',
+        // Remove for scrollable zoom. However, map doesn't scale when changing window size 
         responsive: true,
-        height: 700,
+        //height: 700,
         fills: {
             defaultFill: '#D0D0D0',
             visited: '#B0B0B0',
