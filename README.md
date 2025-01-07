@@ -20,6 +20,9 @@ Missing features:
 * No zoom (the webapp is based on D3 Datamaps which doesn't support
   interactive zoom as builtin feature; patches to add zoom support in
   a clean way (no bloat please!) are welcome).
+* TODO:
+  * Either work with _responsive_ set to _false_ and dynamically adjust the size of the map with a different script, or
+  * use a responsive design and reset the zoom to an initial state after resize. 
 
 How to use:
 
