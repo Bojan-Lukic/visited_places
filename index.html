@@ -2,58 +2,79 @@
 <meta charset="utf-8">
 <head>
     <title>Visited Places</title>
+    <link rel = "stylesheet" type = "text/css" href = "stylesheet.css" media = "screen"/>
     <script src="d3/d3.v3.min.js"></script>
     <script src="d3/topojson.v1.min.js"></script>
     <script src="datamaps/datamaps.world.min.js"></script>
+    <script src="zoom_function.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.7.1.min.js"></script>
 </head>
 <body>
     <h1>Visited Places</h1>
-    <div id="map1" style="position: relative; width: auto; height: 100vh; border: solid black;"></div>
+    <button class="zoom-button" style = "top: 20px; right: 85px" data-zoom="reset">0</button>
+    <button class="zoom-button" style = "top: 20px; right: 50px" data-zoom="out">-</button>
+    <button class="zoom-button" style = "top: 20px; right: 15px" data-zoom="in">+</button>
+    <div id="zoom-info" style = "top: 16px; right: 115px"></div>
+
+    <div id="container" style="position: relative; width: 100%; height: 12vw;"></div>
 
     <script src="countries.js"></script>
     <script src="cities.js"></script>
 
-    <script>
+    <script> 
 
-    var map = new Datamap({
-        scope: 'world',
-        element: document.getElementById('map1'),
-        projection: 'mercator',
-        // Remove for scrollable zoom. However, map doesn't scale when changing window size 
-        responsive: true,
-        //height: 700,
-        fills: {
-            defaultFill: '#D0D0D0',
-            visited: '#B0B0B0',
-            city: '#FC8050'
-        },
-        geographyConfig: {
-            highlightOnHover: true,
-            highlightFillColor: '#A0C0A0',
-            highlightBorderColor: '#F0F0F0',
-            popupOnHover: true,
-            popupTemplate: function(geography, data) {
-                return '<div class="hoverinfo"><b>' + geography.properties.name + '</b></div>';
-            },
-        },
-        bubblesConfig: {
-            borderWidth: 1,
-            borderColor: '#FFFFFF',
-            highlightOnHover: true,
-            popupOnHover: true,
-            popupTemplate: function(geo, data) {
-                return "<div class='hoverinfo'>" + data.name + ":<br>" + data.date + "</div>";
-            }
-        },
+        function Datamap() {
+            this.$container = $("#container");
+            this.instance = new Datamaps({
+                scope: 'world',
+                element: this.$container.get(0),
+                projection: 'mercator',
+                responsive: true, 
+                // Make container wrap around map rather than setting a fixed height for the map
+                //height: 700,
+                fills: {
+                    defaultFill: '#D0D0D0',
+                    visited: '#B0B0B0',
+                    city: '#FC8050'
+                },
+                geographyConfig: {
+                    highlightOnHover: true,
+                    highlightFillColor: '#A0C0A0',
+                    highlightBorderColor: '#F0F0F0', 
+                    popupOnHover: true,
+                    popupTemplate: function(geography, data) {
+                        return '<div class="hoverinfo"><b>' + geography.properties.name + '</b></div>';
+                    },
+                },
+                bubblesConfig: {
+                    borderWidth: 1,
+                    borderColor: '#FFFFFF',
+                    highlightOnHover: true,
+                    popupOnHover: true,
+                    popupTemplate: function(geo, data) {
+                        return "<div class='hoverinfo'>" + data.name + ":<br>" + data.date + "</div>";
+                    }
+                },
+                done: this._handleMapReady.bind(this), 
+                data: COUNTRIES
+            });
 
-        data: COUNTRIES
-    });
+            this.instance.bubbles(CITIES);
+            map = this.instance;
+        }
 
-    map.bubbles(CITIES);
+        Datamap.prototype._handleMapReady = function(datamap) {
+            this.zoom = new Zoom({
+                $container: this.$container,
+                datamap: datamap
+            });
+        }
 
-    window.addEventListener('resize', function() {
-        map.resize();
-    });
+        new Datamap();
+
+        window.addEventListener('resize', function() {
+            map.resize(); 
+        }); 
 
     </script>
 </body>
